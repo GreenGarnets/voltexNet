@@ -20,7 +20,7 @@ from tqdm import tqdm
 
 import os
 
-def infer(model, filename) :
+def infer(model, device, batch, filename, savename) :
 
     # Training End, infer #
     input = KshDataset.music_load(filename + '/nofx.ogg')    
@@ -66,12 +66,12 @@ def infer(model, filename) :
 
     song = mp.Audio(filename = (filename + "nofx.ogg"),  note_timestamp = note_time_Stamp_output, fx_timestamp = fx_time_Stamp_output)
     song.synthesize(diff='ka')
-    song.save(filename = "infer.wav")
+    song.save(filename = savename)
 
 def main():
     
     model = voltexNet()
-    #model.load_state_dict(torch.load("./model/model_bestAcc_.pth"))
+    model.load_state_dict(torch.load("./model_99_.pth"))
     #print ("load model")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -81,7 +81,7 @@ def main():
     #input = torch.rand(128,3,80,15)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.2, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     scheduler = lr_scheduler.StepLR(optimizer, step_size=200, gamma=0.1)
 
     # kshDataset에서는 (곡의 길이 * 25 = batch) * (sample rate * 0.04)의 tensor가 넘어옴
@@ -97,12 +97,12 @@ def main():
     filenames = os.listdir(dirname)
     valnames = os.listdir(valname)
 
-    batch = 512
+    batch = 256
     song_index = 0
     best_Acc = 0
 
     epoch_loss = 0.0
-
+    '''
     for epoch in range(0,800) :
         epoch_loss = 0.0
         train_loss = 0.0
@@ -213,8 +213,9 @@ def main():
             break
         
         torch.save(model.state_dict(), "./model/model_"+ str(epoch)+ "_.pth")
-    
-    infer(mode, "./data_test/songs/badapple_nomico_alreco")
+    '''
+    infer(model, device, batch, "./data_test/songs/smooooch_kn/","infer.wav")
+    infer(model, device, batch, "./data_test/songs/dynasty_yooh/","infer2.wav")
     
 
 
