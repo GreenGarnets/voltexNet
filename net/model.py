@@ -1,22 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-# note model = DDC Step Selection + Step Placement
-# nove model = Step Placement Score => FCLayer이 곧 Nove의 위치를 나타냄
-# DDC Step Selection
-
-#torch.Size([1024, 1, 1764])
-#torch.Size([1024, 128, 1764])
-#torch.Size([1024, 128, 441])
-#torch.Size([1024, 128, 110])
-#torch.Size([1024, 256, 27])
-#torch.Size([1024, 256, 6])
-#torch.Size([1024, 512, 1])
-#torch.Size([1024, 512, 1])
-#torch.Size([1024, 512])
-#torch.Size([1024, 256])
-#torch.Size([1024, 4])
+from torchsummary import summary
 
 class voltexNet(nn.Module):
 
@@ -71,43 +56,36 @@ class voltexNet(nn.Module):
         #self.output = F.softmax(linear(output),1)
 
     
-    def forward(self, x, batch):
+    def forward(self, x):
+        batch = x.size(0)
 
-        #print(x.shape)
         out = self.conv1(x)
-        #print(out.shape)
         out = self.conv2(out)
-        #print(out.shape)
         out = self.conv3(out)
-        #print(out.shape)
         out = self.conv4(out)
-        #print(out.shape)
         out = self.conv5(out)
-        #print(out.shape)
         out = self.conv6(out)
-        #print(out.shape)
         out = self.conv7(out)
-        #print(out.shape)
         out = self.conv8(out)
-        #print(out.shape)
         
         out = out.reshape(batch,out.size(1)* out.size(2))
         #print(out.shape)
 
         out = self.fc(out)
-        #print(out.shape)
         #out = self.fc2(out)
-        #print(out.shape)
 
         # out = out.reshape(1,batch,out.size(1))
-        # print(out.shape)
         # out, hidden = self.LSTM(out)
-        # print(out.shape)
         # out = out.squeeze()
-        # print(out.shape)
 
         return out
-        #return F.softmax(out,1)
+
+if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # PyTorch v0.4.0
+    model = voltexNet().to(device)
+
+    summary(model, [(1, 1764)])
+
 '''
 class VoltexLSTM
 

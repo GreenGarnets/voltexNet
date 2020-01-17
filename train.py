@@ -71,7 +71,7 @@ def infer(model, device, batch, filename, savename) :
 def main():
     
     model = voltexNet()
-    model.load_state_dict(torch.load("./model_99_.pth"))
+    #model.load_state_dict(torch.load("./model_99_.pth"))
     #print ("load model")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -102,7 +102,7 @@ def main():
     best_Acc = 0
 
     epoch_loss = 0.0
-    '''
+    
     for epoch in range(0,800) :
         epoch_loss = 0.0
         train_loss = 0.0
@@ -213,7 +213,7 @@ def main():
             break
         
         torch.save(model.state_dict(), "./model/model_"+ str(epoch)+ "_.pth")
-    '''
+    
     infer(model, device, batch, "./data_test/songs/smooooch_kn/","infer.wav")
     infer(model, device, batch, "./data_test/songs/dynasty_yooh/","infer2.wav")
     
