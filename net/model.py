@@ -57,7 +57,6 @@ class voltexNet(nn.Module):
 
     
     def forward(self, x):
-        batch = x.size(0)
 
         out = self.conv1(x)
         out = self.conv2(out)
@@ -68,7 +67,7 @@ class voltexNet(nn.Module):
         out = self.conv7(out)
         out = self.conv8(out)
         
-        out = out.reshape(batch,out.size(1)* out.size(2))
+        out = out.reshape(out.size(0), out.size(1)* out.size(2))
         #print(out.shape)
 
         out = self.fc(out)

@@ -135,7 +135,7 @@ def main():
                 if i+batch < input.shape[0] :
                     optimizer.zero_grad()
 
-                    pred = model(input[i:i+batch],batch)
+                    pred = model(input[i:i+batch])
                     
                     
                     loss = criterion(pred.squeeze(), target[i:i+batch].squeeze())
@@ -173,7 +173,7 @@ def main():
             output = []
             for i in range(0,input.shape[0], batch):
                 if i+batch < input.shape[0] :
-                    pred = model(input[i:i+batch],batch)
+                    pred = model(input[i:i+batch])
                     pred = pred.to(torch.device("cpu"))
                     if i == 0 :                        
                         output = pred.tolist()
