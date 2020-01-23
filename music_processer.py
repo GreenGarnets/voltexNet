@@ -57,11 +57,15 @@ class Audio:
             stop_t = self.data.shape[0]
         sf.write(filename, self.data[start_t:stop_t], self.samplerate)
 
-    def synthesize(self, diff=True, ka="./data/clap.wav"):
+    def synthesize(self, diff=True, ka="./data/clap.wav", don = "./data/don.wav"):
         
         kasound = sf.read(ka)[0]
         kasound = (kasound[:, 0] + kasound[:, 1]) / 2
         kalen = len(kasound)
+
+        donsound = sf.read(don)[0]
+        donsound = (donsound[:, 0] + donsound[:, 1]) / 2
+        donlen = len(donsound)
         
         if diff is True:
             for stamp in self.timestamp:
@@ -85,9 +89,9 @@ class Audio:
                     if stamp*(self.samplerate/25)+kalen < self.data.shape[0]:
                         self.data[int(stamp*(self.samplerate/25)):int(stamp*(self.samplerate/25))+kalen] += kasound
 
-                #fx_cut_sw = False
-                #for stamp in self.fx_timestamp:
-                    #if stamp*(self.samplerate/25)+kalen < self.data.shape[0]:                       
-                        #self.data[int(stamp*(self.samplerate/25))] -= 10
+                fx_cut_sw = False
+                for stamp in self.fx_timestamp:
+                    if stamp*(self.samplerate/25)+donlen < self.data.shape[0]:                       
+                        self.data[int(stamp*(self.samplerate/25)):int(stamp*(self.samplerate/25))+donlen] += donsound
 
         

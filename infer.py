@@ -21,6 +21,7 @@ from tqdm import tqdm
 import os
 
 def infer(model, device, batch, filename, savename) :
+    TH = 0.2
 
     # Training End, infer #
     input = KshDataset.music_load(filename)    
@@ -32,7 +33,9 @@ def infer(model, device, batch, filename, savename) :
         if i+batch < input.shape[0] :
             pred = model(input[i:i+batch])
             pred = pred.to(torch.device("cpu"))
-            if i == 0 :                        
+            if i == 0 :     
+                softmax = nn.Softmax(dim=1)
+                pred = softmax(pred)                   
                 output = pred.tolist()
             else :
                 pred = pred.tolist()
@@ -42,26 +45,30 @@ def infer(model, device, batch, filename, savename) :
     #torch.save(model.state_dict(), "./model/model.pth")
 
     index = 0
+    beforeIndex = 0
     note_time_Stamp_output = []
     fx_time_Stamp_output = []
 
     for time in output :
-        #print(time.index(max(time)))
+        print(time.index(max(time)), time[time.index(max(time))])
         
-        if time.index(max(time)) == 1 :
+        if time.index(max(time)) == 1 and time[time.index(max(time))] > 0.2 and index > beforeIndex + 1:
             note_time_Stamp_output.append(index)
+            beforeIndex = index
 
-        if time.index(max(time)) == 2 :
-            fx_time_Stamp_output.append(index)
+        if time.index(max(time)) == 2 and time[time.index(max(time))] > 0.2 and index > beforeIndex + 1:
+            #fx_time_Stamp_output.append(index)
+            beforeIndex = index
             
-        if time.index(max(time)) == 3 :
+        if time.index(max(time)) == 3 and time[time.index(max(time))] > 0.2 and index > beforeIndex + 1:
             note_time_Stamp_output.append(index)
-            fx_time_Stamp_output.append(index)
+            #fx_time_Stamp_output.append(index)
+            beforeIndex = index
         
         index = index + 1
 
-    print(note_time_Stamp_output)
-    print(fx_time_Stamp_output)
+    #print(note_time_Stamp_output)
+    #print(fx_time_Stamp_output)
     #print(fx_time_Stamp_output)
 
     song = mp.Audio(filename = (filename),  note_timestamp = note_time_Stamp_output, fx_timestamp = fx_time_Stamp_output)
@@ -71,7 +78,7 @@ def infer(model, device, batch, filename, savename) :
 def main():
     
     model = voltexNet()
-    #model.load_state_dict(torch.load("./model_99_.pth"))
+    model.load_state_dict(torch.load("./train_model.pth"))
     #print ("load model")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -80,20 +87,16 @@ def main():
     model.to(device)
     #input = torch.rand(128,3,80,15)
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-    scheduler = lr_scheduler.StepLR(optimizer, step_size=200, gamma=0.1)
-
     batch = 256
     song_index = 0
     best_Acc = 0
 
     epoch_loss = 0.0
 
-    infer(model, device, batch, "./Asset/albida.ogg","infer.wav")
-    infer(model, device, batch, "./Asset/nofx.ogg","infer2.wav")
-    infer(model, device, batch, "./Asset/KANA-BOON - Silhouette.ogg","infer3.wav")
-    infer(model, device, batch, "./Asset/bgm.ogg","infer4.wav")
+    infer(model, device, batch, "./Asset/albida.ogg","./test_Output/infer.wav")
+    infer(model, device, batch, "./Asset/nofx.ogg","./test_Output/infer2.wav")
+    infer(model, device, batch, "./Asset/KANA-BOON - Silhouette.ogg","./test_Output/infer3.wav")
+    infer(model, device, batch, "./Asset/bgm.ogg","./test_Output/infer4.wav")
     
 
 
