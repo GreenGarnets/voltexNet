@@ -214,8 +214,6 @@ def main():
         
         torch.save(model.state_dict(), "./model/model_"+ str(epoch)+ "_.pth")
     
-    infer(model, device, batch, "./data_test/songs/smooooch_kn/","infer.wav")
-    infer(model, device, batch, "./data_test/songs/dynasty_yooh/","infer2.wav")
     
 
 
