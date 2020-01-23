@@ -50,19 +50,19 @@ def infer(model, device, batch, filename, savename) :
     fx_time_Stamp_output = []
 
     for time in output :
-        print(time.index(max(time)), time[time.index(max(time))])
+        #nt(time.index(max(time)), time[time.index(max(time))])
         
         if time.index(max(time)) == 1 and time[time.index(max(time))] > 0.2 and index > beforeIndex + 1:
             note_time_Stamp_output.append(index)
             beforeIndex = index
 
         if time.index(max(time)) == 2 and time[time.index(max(time))] > 0.2 and index > beforeIndex + 1:
-            #fx_time_Stamp_output.append(index)
+            fx_time_Stamp_output.append(index)
             beforeIndex = index
             
         if time.index(max(time)) == 3 and time[time.index(max(time))] > 0.2 and index > beforeIndex + 1:
             note_time_Stamp_output.append(index)
-            #fx_time_Stamp_output.append(index)
+            fx_time_Stamp_output.append(index)
             beforeIndex = index
         
         index = index + 1
@@ -74,6 +74,8 @@ def infer(model, device, batch, filename, savename) :
     song = mp.Audio(filename = (filename),  note_timestamp = note_time_Stamp_output, fx_timestamp = fx_time_Stamp_output)
     song.synthesize(diff='ka')
     song.save(filename = savename)
+
+    return note_time_Stamp_output, fx_time_Stamp_output
 
 def main():
     
