@@ -71,7 +71,7 @@ def infer(model, device, batch, filename, savename) :
 def main():
     
     model = voltexNet()
-    model.load_state_dict(torch.load("./model_99_.pth"))
+    #model.load_state_dict(torch.load("./model_99_.pth"))
     #print ("load model")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -97,7 +97,7 @@ def main():
     filenames = os.listdir(dirname)
     valnames = os.listdir(valname)
 
-    batch = 256
+    batch = 128
     song_index = 0
     best_Acc = 0
 
@@ -114,9 +114,9 @@ def main():
             full_filename = os.path.join(dirname, filename)
             #print(full_filename)
 
-            input = KshDataset.music_load(full_filename + '/nofx.ogg')
+            input = KshDataset.music_load("./cache/" + filename+'.npy')
             #print(input.shape)
-            input = input.reshape(input.shape[0], 1, -1)       
+            #input = input.reshape(input.shape[0], 1, -1)       
             target = KshDataset.timeStamp(full_filename + '/exh.ksh', input.shape[0]) 
             try : 
                 if target == None:
@@ -148,7 +148,7 @@ def main():
                     optimizer.zero_grad()
                     tmp_batch = input.shape[0] - i
                     if tmp_batch > 1 : 
-                        pred = model(input[i:i+tmp_batch-1],tmp_batch-1)
+                        pred = model(input[i:i+tmp_batch-1])
                         
                         loss = criterion(pred.squeeze(), target[i:i+tmp_batch-1].squeeze())
                         loss.backward()
@@ -165,8 +165,7 @@ def main():
         #model.to(torch.device("cpu"))
         for filename in tqdm(valnames):
             full_filename = os.path.join(valname, filename)
-            input = KshDataset.music_load(full_filename + '/nofx.ogg')
-            input = input.reshape(input.shape[0], 1, -1)    
+            input = KshDataset.music_load("./cache/" + filename+'.npy')
             input = input.to(device, dtype=torch.float)   
             target = KshDataset.timeStamp(full_filename + '/exh.ksh', input.shape[0]) 
         

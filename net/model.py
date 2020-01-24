@@ -10,7 +10,7 @@ class voltexNet(nn.Module):
         super(voltexNet, self).__init__()        
 
         self.conv1 = nn.Sequential(
-            nn.Conv1d(1, 128, kernel_size=3, stride=1, padding=1),
+            nn.Conv1d(3, 128, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm1d(128),
             nn.ReLU())
         self.conv2 = nn.Sequential(
@@ -39,17 +39,12 @@ class voltexNet(nn.Module):
             nn.ReLU(),
             nn.MaxPool1d(3,stride=3))
         self.conv7 = nn.Sequential(
-            nn.Conv1d(256, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm1d(512),
+            nn.Conv1d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm1d(256),
             nn.ReLU(),
             nn.MaxPool1d(3,stride=3))
-        self.conv8 = nn.Sequential(
-            nn.Conv1d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm1d(512),
-            nn.ReLU(),
-            nn.Dropout(0.5))
 
-        self.fc = nn.Linear(1024, 4)
+        self.fc = nn.Linear(256, 4)
         
         #self.LSTM = nn.LSTM(input_size = 4, hidden_size = 2, bidirectional=True)
         #self.fc3 = nn.Linear(hidden_size*2,output_size)
@@ -57,6 +52,7 @@ class voltexNet(nn.Module):
 
     
     def forward(self, x):
+        x = x.squeeze()
 
         out = self.conv1(x)
         out = self.conv2(out)
@@ -65,7 +61,6 @@ class voltexNet(nn.Module):
         out = self.conv5(out)
         out = self.conv6(out)
         out = self.conv7(out)
-        out = self.conv8(out)
         
         out = out.reshape(out.size(0), out.size(1)* out.size(2))
         #print(out.shape)
@@ -83,7 +78,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # PyTorch v0.4.0
     model = voltexNet().to(device)
 
-    summary(model, [(1, 1764)])
+    summary(model, [(3, 883, 1)])
 
 '''
 class VoltexLSTM

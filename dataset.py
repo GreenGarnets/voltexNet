@@ -14,7 +14,7 @@ from PIL import Image
 
 import librosa
 import librosa.display
-import tqdm
+from tqdm import tqdm
 from scipy.fftpack import fft
 from scipy import signal
 
@@ -81,12 +81,45 @@ class KshDataset():
     
 
     def music_load(filename) :
+        '''
         y, sr = librosa.load(filename, sr=44100)
         y_  = np.zeros(int(44100*0.04)-int(len(y)%int(44100*0.04)))
         y = np.hstack([y,y_])
 
         y = np.reshape(y, (-1, int(sr/100)*4 ))
+
         y = torch.from_numpy(y)
+
+        print(a.shape)
+        '''
+        y = np.load(filename)
+        y = torch.from_numpy(y)
+
+        return y
+
+    def music_cache_make(filelist) :
+        #f = codecs.open("music_cache_data","w")
+
+        for filename in tqdm(filelist):
+            y, sr = librosa.load("./data_test/songs/" + filename+"/nofx.ogg", sr=44100)
+            y_  = np.zeros(int(44100*0.04)-int(len(y)%int(44100*0.04)))
+            y = np.hstack([y,y_])
+
+            y = np.reshape(y, (-1, int(sr/100)*4 ))
+            #print(y.shape)
+
+            a = []
+            for i in range(0, y.shape[0]) :
+                y1 = np.abs(librosa.stft(y[i], n_fft = 1764, hop_length=2048, win_length = 441))
+                y2 = np.abs(librosa.stft(y[i], n_fft = 1764, hop_length=2048, win_length = 882))
+                y3 = np.abs(librosa.stft(y[i], n_fft = 1764, hop_length=2048, win_length = 1764))
+
+                a.append(np.array([y1,y2,y3]).tolist())
+                #if i == 200 : print(np.array([y1,y2,y3]))
+
+            a = np.array(a)
+            #print(a.shape)
+            np.save("./cache/"+filename,a)
 
         return y
 
@@ -220,6 +253,8 @@ class KshDataset():
         return return_timestamp
 
 if __name__ == "__main__":
-    y, sr = librosa.load("./data/songs/rootsphere_lastnote/nofx.ogg", sr=44100)
-    KshDataset.timeStamp("./data/songs/rootsphere_lastnote/exh.ksh", y.shape[0])
+    filenames = os.listdir("./data_test/songs/")
+    KshDataset.music_cache_make(filenames)
+    #y, sr = librosa.load("./data/songs/rootsphere_lastnote/nofx.ogg", sr=44100)
+    #KshDataset.timeStamp("./data/songs/rootsphere_lastnote/exh.ksh", y.shape[0])
     #print(y.shape[0]//441)
