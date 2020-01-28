@@ -101,7 +101,7 @@ class KshDataset():
         #f = codecs.open("music_cache_data","w")
 
         for filename in tqdm(filelist):
-            y, sr = librosa.load("./data_test/songs/" + filename+"/nofx.ogg", sr=44100)
+            y, sr = librosa.load("./test_ogg/" + filename+"", sr=44100)
             y_  = np.zeros(int(44100*0.04)-int(len(y)%int(44100*0.04)))
             y = np.hstack([y,y_])
 
@@ -183,17 +183,21 @@ class KshDataset():
                 #print(line.replace("\r\n",""))
         
         tmp_note = []
+        index = 0
         for note in note_list : 
             if note[0][0:4] != "0000" :
-                note_time_Stamp[int(note[1]*(sr/(sr*0.04)))] = 1
+                if note_list[index][0][0:4] != note_list[index+1][0][0:4] or note_list[index][0][0:4] != note_list[index-1][0][0:4]:
+                    note_time_Stamp[int(note[1]*(sr/(sr*0.04)))] = 1
+                    #print(int(note[1]*(sr/(sr*0.04))), note_list[index][0:4])
+                    #print(note, 0)
             if note[0][5:7] != "00":
-                #print(note[0][5:7],int(note[1]*100))
-                for i in range(0,25) :
-                    if int(note[1]*(sr/(sr*0.04)))+i < len(fx_time_Stamp) :
-                        fx_time_Stamp[int(note[1]*(sr/(sr*0.04)))+i] = 1
-                #print(note[0][0:4])
+                if note_list[index][0][5:7] != note_list[index+1][0][5:7] or note_list[index][0][5:7] != note_list[index-1][0][5:7]:
+                    fx_time_Stamp[int(note[1]*(sr/(sr*0.04)))] = 1
+                    #print(int(note[1]*(sr/(sr*0.04))), note_list[index][0:4])
+                    #print(note, 1)
 
             tmp_note = note
+            index = index + 1
             #else :
 
         index = 0
@@ -204,13 +208,13 @@ class KshDataset():
             index = index + 1
         #print(note_time_Stamp_output)
 
-
         index = 0
         for time in fx_time_Stamp :
             if time == 1 :
                 fx_time_Stamp_output.append(index)
 
             index = index + 1
+        #print(fx_time_Stamp_output)
 
         # test with sound output
         #print(len(note_time_Stamp_output))
@@ -231,19 +235,17 @@ class KshDataset():
         # class Number target
         return_timestamp = []
         for (note, fx) in zip(note_time_Stamp, fx_time_Stamp) :
-            if note == 1 and fx == 0 :
+            if note == 1 or fx == 1 :
                 return_timestamp.append([1])
-            elif note == 0 and fx == 1 :
-                return_timestamp.append([2])
-            elif note == 1 and fx == 1 :
-                return_timestamp.append([3])
             else :
                 return_timestamp.append([0])
         
         # test log
-        #for time in return_timestamp :
-        #    print(time)
-        
+        index = 0
+        for time in return_timestamp :
+            #print(return_timestamp[int(note_list[index][1]*(sr/(sr*0.04)))],int(note_list[index][1]*(sr/(sr*0.04))) ,note_list[index])
+            index = index + 1
+    
 
         return_timestamp = np.asarray(return_timestamp)
         return_timestamp = torch.from_numpy(return_timestamp)
@@ -253,8 +255,9 @@ class KshDataset():
         return return_timestamp
 
 if __name__ == "__main__":
-    filenames = os.listdir("./data_test/songs/")
+    filenames = os.listdir("./test_ogg/")
     KshDataset.music_cache_make(filenames)
+    #KshDataset.timeStamp("./data/songs/rootsphere_lastnote/exh.ksh", 3400)
     #y, sr = librosa.load("./data/songs/rootsphere_lastnote/nofx.ogg", sr=44100)
     #KshDataset.timeStamp("./data/songs/rootsphere_lastnote/exh.ksh", y.shape[0])
     #print(y.shape[0]//441)

@@ -25,7 +25,7 @@ def infer(model, device, batch, filename, savename) :
 
     # Training End, infer #
     input = KshDataset.music_load(filename)    
-    input = input.reshape(input.shape[0], 1, -1)
+    #input = input.reshape(input.shape[0], 1, -1)
     input = input.to(device, dtype=torch.float)
     
     output = []
@@ -71,7 +71,7 @@ def infer(model, device, batch, filename, savename) :
     #print(fx_time_Stamp_output)
     #print(fx_time_Stamp_output)
 
-    song = mp.Audio(filename = (filename),  note_timestamp = note_time_Stamp_output, fx_timestamp = fx_time_Stamp_output)
+    song = mp.Audio(filename = ("./test_ogg/bgm.ogg"),  note_timestamp = note_time_Stamp_output, fx_timestamp = fx_time_Stamp_output)
     song.synthesize(diff='ka')
     song.save(filename = savename)
 
@@ -80,7 +80,7 @@ def infer(model, device, batch, filename, savename) :
 def main():
     
     model = voltexNet()
-    model.load_state_dict(torch.load("./train_model.pth"))
+    model.load_state_dict(torch.load("./model/model_278_.pth"))
     #print ("load model")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -95,10 +95,10 @@ def main():
 
     epoch_loss = 0.0
 
-    infer(model, device, batch, "./Asset/albida.ogg","./test_Output/infer.wav")
-    infer(model, device, batch, "./Asset/nofx.ogg","./test_Output/infer2.wav")
-    infer(model, device, batch, "./Asset/KANA-BOON - Silhouette.ogg","./test_Output/infer3.wav")
-    infer(model, device, batch, "./Asset/bgm.ogg","./test_Output/infer4.wav")
+    #infer(model, device, batch, "./cache/albida.npy","./test_Output/infer.wav")
+    #infer(model, device, batch, "./test_ogg/nofx.npy","./test_Output/infer2.wav")
+    #infer(model, device, batch, "./Asset/KANA-BOON - Silhouette.ogg","./test_Output/infer3.wav")
+    infer(model, device, batch, "./test_ogg/bgm.npy","./test_Output/infer4.wav")
     
 
 

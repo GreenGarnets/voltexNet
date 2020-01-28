@@ -71,7 +71,7 @@ def infer(model, device, batch, filename, savename) :
 def main():
     
     model = voltexNet()
-    #model.load_state_dict(torch.load("./model_99_.pth"))
+    #model.load_state_dict(torch.load("./model/model_3_.pth"))
     #print ("load model")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -97,7 +97,7 @@ def main():
     filenames = os.listdir(dirname)
     valnames = os.listdir(valname)
 
-    batch = 128
+    batch = 1024
     song_index = 0
     best_Acc = 0
 
