@@ -80,7 +80,7 @@ def main():
     model.to(device)
     #input = torch.rand(128,3,80,15)
 
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.MSELoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     scheduler = lr_scheduler.StepLR(optimizer, step_size=200, gamma=0.1)
 
@@ -125,7 +125,7 @@ def main():
                 __ = 1
 
             input = input.to(device, dtype=torch.float)
-            target = target.to(device, dtype=torch.int64)
+            target = target.to(device, dtype=torch.float)
             
             #print(input.shape)    
             #print(target.shape)

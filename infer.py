@@ -71,7 +71,7 @@ def infer(model, device, batch, filename, savename) :
     #print(fx_time_Stamp_output)
     #print(fx_time_Stamp_output)
 
-    song = mp.Audio(filename = ("./test_ogg/bgm.ogg"),  note_timestamp = note_time_Stamp_output, fx_timestamp = fx_time_Stamp_output)
+    song = mp.Audio(filename = ("./data_test/songs/badapple_nomico_alreco/nofx.ogg"),  note_timestamp = note_time_Stamp_output, fx_timestamp = fx_time_Stamp_output)
     song.synthesize(diff='ka')
     song.save(filename = savename)
 
@@ -98,7 +98,7 @@ def main():
     #infer(model, device, batch, "./cache/albida.npy","./test_Output/infer.wav")
     #infer(model, device, batch, "./test_ogg/nofx.npy","./test_Output/infer2.wav")
     #infer(model, device, batch, "./Asset/KANA-BOON - Silhouette.ogg","./test_Output/infer3.wav")
-    infer(model, device, batch, "./test_ogg/bgm.npy","./test_Output/infer4.wav")
+    infer(model, device, batch, "./cache/badapple_nomico_alreco.npy","./test_Output/infer3.wav")
     
 
 

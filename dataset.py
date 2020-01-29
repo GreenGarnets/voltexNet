@@ -236,9 +236,9 @@ class KshDataset():
         return_timestamp = []
         for (note, fx) in zip(note_time_Stamp, fx_time_Stamp) :
             if note == 1 or fx == 1 :
-                return_timestamp.append([1])
+                return_timestamp.append(1)
             else :
-                return_timestamp.append([0])
+                return_timestamp.append(0)
         
         # test log
         index = 0
@@ -255,9 +255,9 @@ class KshDataset():
         return return_timestamp
 
 if __name__ == "__main__":
-    filenames = os.listdir("./test_ogg/")
-    KshDataset.music_cache_make(filenames)
-    #KshDataset.timeStamp("./data/songs/rootsphere_lastnote/exh.ksh", 3400)
+    #filenames = os.listdir("./test_ogg/")
+    #$KshDataset.music_cache_make(filenames)
+    KshDataset.timeStamp("./data/songs/rootsphere_lastnote/exh.ksh", 3400)
     #y, sr = librosa.load("./data/songs/rootsphere_lastnote/nofx.ogg", sr=44100)
     #KshDataset.timeStamp("./data/songs/rootsphere_lastnote/exh.ksh", y.shape[0])
     #print(y.shape[0]//441)

@@ -37,7 +37,7 @@ class voltexNet(nn.Module):
 
         self.fc1 = nn.Linear(1024, 512)
         self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, 2)
+        self.fc3 = nn.Linear(256, 1)
 
         #self.lstm = nn.LSTM()
         
